@@ -1,9 +1,10 @@
 import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'node:fs'
 
-const supabaseUrl = process.env.SUPABASE_URL!
-const supabaseKey = process.env.SUPABASE_KEY!
-const supabase = createClient(supabaseUrl, supabaseKey)
+const supabase = createClient(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_KEY!
+)
 
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
@@ -20,17 +21,17 @@ export async function upload(pathToOpenApi: string): Promise<void> {
     const fileBody = readFileSync(pathToOpenApi)
     const parts = pathToOpenApi.split('/')
     // TODO: replace with unique bucket name
-    const name = `test/${parts[parts.length - 1]}-${new Date().toTimeString()}`
+    const name = `test/${new Date().toISOString()}`
     const { error } = await supabase.storage
       .from('openapi-specs')
       .upload(name, fileBody, {
         cacheControl: '3600',
         upsert: false
       })
-    
-      if (error) {
-        throw new Error(error.message)
-      }
+
+    if (error) {
+      throw new Error(error.message)
+    }
 
     resolve()
   })

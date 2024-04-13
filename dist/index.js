@@ -41629,13 +41629,11 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.upload = void 0;
 const supabase_js_1 = __nccwpck_require__(1206);
 const node_fs_1 = __nccwpck_require__(7561);
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = (0, supabase_js_1.createClient)(supabaseUrl, supabaseKey);
+const supabase = (0, supabase_js_1.createClient)(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 /**
- * Wait for a number of milliseconds.
- * @param milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
+ * Read and upload the provided OpenAPI specification to Hey API.
+ * @param pathToOpenApi Path to the OpenAPI specification file.
+ * @returns {Promise<void>} Resolves after the file is uploaded.
  */
 async function upload(pathToOpenApi) {
     return new Promise(async (resolve) => {
@@ -41643,17 +41641,19 @@ async function upload(pathToOpenApi) {
         if (!pathToOpenApi) {
             throw new Error('OpenAPI path is invalid');
         }
-        // TODO: add timestamp/user id to name/bucket
         const fileBody = (0, node_fs_1.readFileSync)(pathToOpenApi);
-        const bucketId = 'openapi-specs';
         const parts = pathToOpenApi.split('/');
-        const name = `test/${parts[parts.length - 1]}`;
-        const { data, error } = await supabase.storage
-            .from(bucketId)
+        // TODO: replace with unique bucket name
+        const name = `test/${new Date().toISOString()}`;
+        const { error } = await supabase.storage
+            .from('openapi-specs')
             .upload(name, fileBody, {
             cacheControl: '3600',
             upsert: false
         });
+        if (error) {
+            throw new Error(error.message);
+        }
         resolve();
     });
 }
