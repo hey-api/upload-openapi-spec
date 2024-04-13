@@ -41644,7 +41644,7 @@ async function upload(pathToOpenApi) {
         const fileBody = (0, node_fs_1.readFileSync)(pathToOpenApi);
         const parts = pathToOpenApi.split('/');
         // TODO: replace with unique bucket name
-        const name = `test/${new Date().toISOString()}`;
+        const name = `@hey-api/upload-openapi-spec/${new Date().toISOString()}`;
         const { error } = await supabase.storage
             .from('openapi-specs')
             .upload(name, fileBody, {
