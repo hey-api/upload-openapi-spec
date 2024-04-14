@@ -7,10 +7,9 @@ branding:
   color: red
 
 inputs:
-  # TOOD: add token support
-  # hey-api-token:
-  #     description: Hey API service token
-  #     required: true
+  hey-api-token:
+    description: Hey API service token
+    required: true
   path-to-openapi:
     description: Input path to your OpenAPI specification file
     required: true

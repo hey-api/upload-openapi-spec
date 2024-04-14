@@ -7,6 +7,9 @@ import { upload } from './upload'
  */
 export async function run(): Promise<void> {
   try {
+    const heyApiToken: string = core.getInput('hey-api-token', {
+      required: true
+    })
     const pathToOpenApi: string = core.getInput('path-to-openapi', {
       required: true
     })
@@ -14,7 +17,7 @@ export async function run(): Promise<void> {
     core.debug(`Path to OpenAPI: ${pathToOpenApi}`)
 
     core.debug(`Upload started: ${new Date().toTimeString()}`)
-    await upload(pathToOpenApi)
+    await upload(pathToOpenApi, heyApiToken)
     core.debug(`Upload completed: ${new Date().toTimeString()}`)
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)

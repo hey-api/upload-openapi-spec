@@ -31,7 +31,7 @@
     ".": "./dist/index.js"
   },
   "engines": {
-    "node": "^18.0.0 || >=20.0.0"
+    "node": ">=20"
   },
   "scripts": {
     "all": "npm run format:write && npm run lint && npm run test && npm run coverage && npm run package",
@@ -76,8 +76,7 @@
     ]
   },
   "dependencies": {
-    "@actions/core": "1.10.1",
-    "@supabase/supabase-js": "2.42.3"
+    "@actions/core": "1.10.1"
   },
   "devDependencies": {
     "@jest/globals": "29.7.0",
