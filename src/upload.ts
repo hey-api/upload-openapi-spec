@@ -1,53 +1,56 @@
-import { createClient } from '@supabase/supabase-js'
 import { readFileSync } from 'node:fs'
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_KEY!
-)
 
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  * @param pathToOpenApi Path to the OpenAPI specification file.
+ * @param heyApiToken Hey API token.
  * @returns {Promise<void>} Resolves after the file is uploaded.
  */
-export async function upload(pathToOpenApi: string): Promise<void> {
+export async function upload(
+  pathToOpenApi: string,
+  heyApiToken: string,
+  dryRun?: boolean
+): Promise<void> {
   return new Promise(async resolve => {
-    // TODO: throw if path is invalid
     if (!pathToOpenApi) {
-      throw new Error('OpenAPI path is invalid')
+      throw new Error('invalid OpenAPI path')
     }
 
-    const fileBody = readFileSync(pathToOpenApi)
-
-    const match = pathToOpenApi.match(/\.[0-9a-z]+$/i)
-    const extension = match ? match[0] : ''
-
-    // TODO: replace with unique bucket name
-    const fileName = new Date().toISOString() + extension
-    const org = '@hey-api'
-    const project = 'upload-openapi-spec'
-    const filePath = `${org}/${project}/${fileName}`
-
-    const uploadResponse = await supabase.storage
-      .from('openapi-specs')
-      .upload(filePath, fileBody, {
-        cacheControl: '3600',
-        upsert: false
-      })
-
-    if (uploadResponse.error) {
-      throw new Error(uploadResponse.error.message)
+    let data: Buffer
+    try {
+      data = readFileSync(pathToOpenApi)
+    } catch (error) {
+      throw new Error('invalid OpenAPI path')
     }
 
-    const insertResponse = await supabase.from('openapi-specs').insert({
-      org,
-      path: filePath,
-      project
-    })
+    let formData = [
+      [encodeURIComponent('openapi'), encodeURIComponent(data.toString())]
+    ]
 
-    if (insertResponse.error) {
-      throw new Error(insertResponse.error.message)
+    if (dryRun) {
+      formData = [
+        ...formData,
+        [encodeURIComponent('dry-run'), encodeURIComponent(dryRun)]
+      ]
+    }
+
+    const body = formData.flatMap(arr => arr.join('=')).join('&')
+
+    const response = await fetch(
+      'https://platform-production-25fb.up.railway.app/api/openapi',
+      {
+        body,
+        headers: {
+          Authorization: `Bearer ${heyApiToken}`,
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        method: 'POST'
+      }
+    )
+
+    if (response.status >= 300) {
+      const error = await response.json()
+      throw new Error(JSON.stringify(error))
     }
 
     resolve()
