@@ -7,6 +7,9 @@ branding:
   color: red
 
 inputs:
+  dry-run:
+    description: Run action in dry run mode
+    required: false
   hey-api-token:
     description: Hey API service token
     required: true

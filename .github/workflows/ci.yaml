@@ -22,9 +22,18 @@ jobs:
         with:
           node-version: 20
 
-      - name: Upload OpenAPI spec
-        id: upload-openapi-spec
+      - name: Upload JSON OpenAPI spec
+        id: upload-json-openapi-spec
         uses: ./
         with:
+          dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.json
+
+      - name: Upload YAML OpenAPI spec
+        id: upload-yaml-openapi-spec
+        uses: ./
+        with:
+          dry-run: true
+          hey-api-token: ${{ secrets.HEY_API_TOKEN }}
+          path-to-openapi: ./openapi.yaml
