@@ -1,4 +1,3 @@
-import * as core from '@actions/core'
 import { readFileSync } from 'node:fs'
 
 /**
@@ -33,9 +32,6 @@ export async function upload(
     if (dryRun) {
       formData['dry-run'] = dryRun
     }
-
-    core.debug(`GitHub repo: ${process.env.GITHUB_REPOSITORY}`)
-    core.debug(`GitHub repo ID: ${process.env.GITHUB_REPOSITORY_ID}`)
 
     const body = Object.entries(formData)
       .flatMap(
