@@ -1,3 +1,4 @@
+import * as core from '@actions/core'
 import { readFileSync } from 'node:fs'
 
 /**
@@ -23,18 +24,25 @@ export async function upload(
       throw new Error('invalid OpenAPI path')
     }
 
-    let formData = [
-      [encodeURIComponent('openapi'), encodeURIComponent(data.toString())]
-    ]
-
-    if (dryRun) {
-      formData = [
-        ...formData,
-        [encodeURIComponent('dry-run'), encodeURIComponent(dryRun)]
-      ]
+    const formData: Record<string, string | number | boolean> = {
+      github_repo: process.env.GITHUB_REPOSITORY!,
+      github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
+      openapi: data.toString()
     }
 
-    const body = formData.flatMap(arr => arr.join('=')).join('&')
+    if (dryRun) {
+      formData['dry-run'] = dryRun
+    }
+
+    core.debug(`GitHub repo: ${process.env.GITHUB_REPOSITORY}`)
+    core.debug(`GitHub repo ID: ${process.env.GITHUB_REPOSITORY_ID}`)
+
+    const body = Object.entries(formData)
+      .flatMap(
+        ([key, value]) =>
+          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+      )
+      .join('&')
 
     const response = await fetch(
       'https://platform-production-25fb.up.railway.app/api/openapi',
