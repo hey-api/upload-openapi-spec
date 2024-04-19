@@ -19,9 +19,6 @@ export async function run(): Promise<void> {
     })
 
     core.debug(`Path to OpenAPI: ${pathToOpenApi}`)
-    core.debug(`GitHub repo: ${process.env.GITHUB_REPOSITORY}`)
-    core.debug(`GitHub repo ID: ${process.env.GITHUB_REPOSITORY_ID}`)
-
     core.debug(`Upload started: ${new Date().toTimeString()}`)
     await upload(pathToOpenApi, heyApiToken, dryRun)
     core.debug(`Upload completed: ${new Date().toTimeString()}`)

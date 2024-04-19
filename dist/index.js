@@ -25005,16 +25005,17 @@ async function upload(pathToOpenApi, heyApiToken, dryRun) {
         catch (error) {
             throw new Error('invalid OpenAPI path');
         }
-        let formData = [
-            [encodeURIComponent('openapi'), encodeURIComponent(data.toString())]
-        ];
+        const formData = {
+            github_repo: process.env.GITHUB_REPOSITORY,
+            github_repo_id: process.env.GITHUB_REPOSITORY_ID,
+            openapi: data.toString()
+        };
         if (dryRun) {
-            formData = [
-                ...formData,
-                [encodeURIComponent('dry-run'), encodeURIComponent(dryRun)]
-            ];
+            formData['dry-run'] = dryRun;
         }
-        const body = formData.flatMap(arr => arr.join('=')).join('&');
+        const body = Object.entries(formData)
+            .flatMap(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
         const response = await fetch('https://platform-production-25fb.up.railway.app/api/openapi', {
             body,
             headers: {
