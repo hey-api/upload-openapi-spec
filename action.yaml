@@ -1,11 +1,8 @@
-name: Upload OpenAPI spec
-description: Upload your OpenAPI specification to Hey API
 author: Hey API
-
 branding:
-  icon: heart
   color: red
-
+  icon: file-plus
+description: Upload your OpenAPI specification to Hey API
 inputs:
   dry-run:
     description: Run action in dry run mode
@@ -16,7 +13,7 @@ inputs:
   path-to-openapi:
     description: Input path to your OpenAPI specification file
     required: true
-
+name: Upload OpenAPI spec by Hey API 👋
 runs:
-  using: node20
   main: dist/index.js
+  using: node20
