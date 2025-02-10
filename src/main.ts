@@ -20,7 +20,11 @@ export async function run(): Promise<void> {
 
     core.debug(`Path to OpenAPI: ${pathToOpenApi}`)
     core.debug(`Upload started: ${new Date().toTimeString()}`)
-    await upload(pathToOpenApi, heyApiToken, dryRun)
+    await upload({
+      dryRun,
+      heyApiToken,
+      pathToOpenApi,
+    })
     core.debug(`Upload completed: ${new Date().toTimeString()}`)
   } catch (error) {
     if (error instanceof Error) {

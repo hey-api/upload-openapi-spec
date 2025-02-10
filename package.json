@@ -2,7 +2,7 @@
   "name": "@hey-api/upload-openapi-spec",
   "description": "Upload your OpenAPI specification to Hey API",
   "version": "0.0.0",
-  "homepage": "https://heyapi.vercel.app/",
+  "homepage": "https://heyapi.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hey-api/upload-openapi-spec.git"
@@ -10,22 +10,34 @@
   "bugs": {
     "url": "https://github.com/hey-api/upload-openapi-spec/issues"
   },
+  "license": "MIT",
+  "author": {
+    "email": "lubos@heyapi.dev",
+    "name": "Hey API",
+    "url": "https://heyapi.dev"
+  },
+  "funding": "https://github.com/sponsors/hey-api",
   "keywords": [
-    "openapi",
-    "swagger",
-    "generator",
-    "typescript",
-    "javascript",
-    "codegen",
-    "yaml",
-    "json",
-    "fetch",
-    "xhr",
-    "axios",
+    "actions",
     "angular",
-    "node",
+    "axios",
+    "codegen",
+    "fetch",
+    "generator",
     "github",
-    "actions"
+    "http",
+    "javascript",
+    "json",
+    "next",
+    "next.js",
+    "node",
+    "nuxt",
+    "openapi",
+    "rest",
+    "swagger",
+    "typescript",
+    "xhr",
+    "yaml"
   ],
   "exports": {
     ".": "./dist/index.js"
@@ -45,7 +57,6 @@
     "package": "npx ncc build src/index.ts -o dist --source-map --license licenses.txt",
     "test": "npx jest"
   },
-  "license": "MIT",
   "jest": {
     "preset": "ts-jest",
     "verbose": true,
