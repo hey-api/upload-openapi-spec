@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs'
+import fs from 'node:fs'
 
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
@@ -26,37 +26,37 @@ export async function upload({
 
   let data: Buffer
   try {
-    data = readFileSync(pathToOpenApi)
+    data = fs.readFileSync(pathToOpenApi)
   } catch {
     throw new Error('invalid OpenAPI path')
   }
 
-  // const formData: Record<string, string | number | boolean> = {
-  //   github_repo: process.env.GITHUB_REPOSITORY!,
-  //   github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-  //   openapi: data.toString()
-  // }
+  const formData: Record<string, string | number | boolean> = {
+    // github_repo: process.env.GITHUB_REPOSITORY!,
+    // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
+    spec: data.toString(),
+  }
 
-  const formData = new FormData();
+  // const formData = new FormData();
 
-  formData.set('spec', data.toString());
+  // formData.set('spec', data.toString());
 
   // if (dryRun) {
   //   formData['dry-run'] = dryRun
   // }
 
-  // const body = Object.entries(formData)
-  //   .flatMap(
-  //     ([key, value]) =>
-  //       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-  //   )
-  //   .join('&')
+  const body = Object.entries(formData)
+    .flatMap(
+      ([key, value]) =>
+        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+    )
+    .join('&')
 
   const response = await fetch(`${baseUrl}/v1/specs`, {
-    body: formData,
+    body,
     headers: {
       Authorization: `Bearer ${heyApiToken}`,
-      'Content-Type': 'multipart/form-data'
+      // 'Content-Type': 'multipart/form-data'
     },
     method: 'POST'
   })
