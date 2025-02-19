@@ -45,15 +45,15 @@ export async function upload({
   //   formData['dry-run'] = dryRun
   // }
 
-  const body = Object.entries(formData)
-    .flatMap(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    )
-    .join('&')
+  // const body = Object.entries(formData)
+  //   .flatMap(
+  //     ([key, value]) =>
+  //       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+  //   )
+  //   .join('&')
 
   const response = await fetch(`${baseUrl}/v1/specs`, {
-    body,
+    body: formData,
     headers: {
       Authorization: `Bearer ${heyApiToken}`,
       'Content-Type': 'multipart/form-data'
