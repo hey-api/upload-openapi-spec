@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs'
  */
 export async function upload({
   baseUrl = 'https://platform-production-25fb.up.railway.app',
-  dryRun,
+  // dryRun,
   heyApiToken,
   pathToOpenApi
 }: {
@@ -31,25 +31,29 @@ export async function upload({
     throw new Error('invalid OpenAPI path')
   }
 
-  const formData: Record<string, string | number | boolean> = {
-    github_repo: process.env.GITHUB_REPOSITORY!,
-    github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-    openapi: data.toString()
-  }
+  // const formData: Record<string, string | number | boolean> = {
+  //   github_repo: process.env.GITHUB_REPOSITORY!,
+  //   github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
+  //   openapi: data.toString()
+  // }
 
-  if (dryRun) {
-    formData['dry-run'] = dryRun
-  }
+  const formData = new FormData();
 
-  const body = Object.entries(formData)
-    .flatMap(
-      ([key, value]) =>
-        `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    )
-    .join('&')
+  formData.set('spec', data.toString());
+
+  // if (dryRun) {
+  //   formData['dry-run'] = dryRun
+  // }
+
+  // const body = Object.entries(formData)
+  //   .flatMap(
+  //     ([key, value]) =>
+  //       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+  //   )
+  //   .join('&')
 
   const response = await fetch(`${baseUrl}/v1/specs`, {
-    body,
+    body: formData,
     headers: {
       Authorization: `Bearer ${heyApiToken}`,
       'Content-Type': 'multipart/form-data'
