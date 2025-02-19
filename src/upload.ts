@@ -1,4 +1,5 @@
 import fs from 'node:fs'
+import path from 'node:path'
 
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
@@ -24,39 +25,23 @@ export async function upload({
     throw new Error('invalid OpenAPI path')
   }
 
-  let data: Buffer
-  try {
-    data = fs.readFileSync(pathToOpenApi)
-  } catch {
-    throw new Error('invalid OpenAPI path')
-  }
+  const formData = new FormData();
+  
+  formData.append('spec', new Blob([fs.readFileSync(pathToOpenApi)]), path.basename(pathToOpenApi));
 
   // const formData: Record<string, string | number | boolean> = {
   //   // github_repo: process.env.GITHUB_REPOSITORY!,
   //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-  //   spec: data.toString(),
   // }
-
-  const formData = new FormData();
-
-  formData.set('spec', data.toString());
 
   // if (dryRun) {
   //   formData['dry-run'] = dryRun
   // }
 
-  // const body = Object.entries(formData)
-  //   .flatMap(
-  //     ([key, value]) =>
-  //       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-  //   )
-  //   .join('&')
-
   const response = await fetch(`${baseUrl}/v1/specs`, {
     body: formData,
     headers: {
       Authorization: `Bearer ${heyApiToken}`,
-      'Content-Type': 'multipart/form-data'
     },
     method: 'POST'
   })

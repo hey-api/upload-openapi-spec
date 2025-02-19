@@ -24998,6 +24998,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.upload = void 0;
 const node_fs_1 = __importDefault(__nccwpck_require__(7561));
+const node_path_1 = __importDefault(__nccwpck_require__(9411));
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
@@ -25007,34 +25008,19 @@ heyApiToken, pathToOpenApi }) {
     if (!pathToOpenApi) {
         throw new Error('invalid OpenAPI path');
     }
-    let data;
-    try {
-        data = node_fs_1.default.readFileSync(pathToOpenApi);
-    }
-    catch {
-        throw new Error('invalid OpenAPI path');
-    }
+    const formData = new FormData();
+    formData.append('spec', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
     // const formData: Record<string, string | number | boolean> = {
     //   // github_repo: process.env.GITHUB_REPOSITORY!,
     //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-    //   spec: data.toString(),
     // }
-    const formData = new FormData();
-    formData.set('spec', data.toString());
     // if (dryRun) {
     //   formData['dry-run'] = dryRun
     // }
-    // const body = Object.entries(formData)
-    //   .flatMap(
-    //     ([key, value]) =>
-    //       `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
-    //   )
-    //   .join('&')
     const response = await fetch(`${baseUrl}/v1/specs`, {
         body: formData,
         headers: {
             Authorization: `Bearer ${heyApiToken}`,
-            'Content-Type': 'multipart/form-data'
         },
         method: 'POST'
     });
@@ -25157,6 +25143,14 @@ module.exports = require("node:events");
 
 "use strict";
 module.exports = require("node:fs");
+
+/***/ }),
+
+/***/ 9411:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:path");
 
 /***/ }),
 
