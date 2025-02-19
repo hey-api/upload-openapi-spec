@@ -31,15 +31,15 @@ export async function upload({
     throw new Error('invalid OpenAPI path')
   }
 
-  const formData: Record<string, string | number | boolean> = {
-    // github_repo: process.env.GITHUB_REPOSITORY!,
-    // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-    spec: data.toString(),
-  }
+  // const formData: Record<string, string | number | boolean> = {
+  //   // github_repo: process.env.GITHUB_REPOSITORY!,
+  //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
+  //   spec: data.toString(),
+  // }
 
-  // const formData = new FormData();
+  const formData = new FormData();
 
-  // formData.set('spec', data.toString());
+  formData.set('spec', data.toString());
 
   // if (dryRun) {
   //   formData['dry-run'] = dryRun
@@ -56,7 +56,7 @@ export async function upload({
     body,
     headers: {
       Authorization: `Bearer ${heyApiToken}`,
-      // 'Content-Type': 'multipart/form-data'
+      'Content-Type': 'multipart/form-data'
     },
     method: 'POST'
   })
