@@ -27,7 +27,7 @@ export async function run(): Promise<void> {
       baseUrl,
       dryRun,
       heyApiToken,
-      pathToOpenApi,
+      pathToOpenApi
     })
     core.debug(`Upload completed: ${new Date().toTimeString()}`)
   } catch (error) {

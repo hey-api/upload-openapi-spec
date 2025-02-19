@@ -4,6 +4,9 @@ branding:
   icon: file-plus
 description: Upload your OpenAPI specification to Hey API
 inputs:
+  base-url:
+    description: Configure Hey API server URL
+    required: false
   dry-run:
     description: Run action in dry run mode
     required: false

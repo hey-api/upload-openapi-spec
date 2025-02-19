@@ -24957,6 +24957,9 @@ async function run() {
         const dryRun = core.getInput('dry-run', {
             required: false
         }) === 'true';
+        const baseUrl = core.getInput('base-url', {
+            required: false
+        });
         const heyApiToken = core.getInput('hey-api-token', {
             required: true
         });
@@ -24965,7 +24968,12 @@ async function run() {
         });
         core.debug(`Path to OpenAPI: ${pathToOpenApi}`);
         core.debug(`Upload started: ${new Date().toTimeString()}`);
-        await (0, upload_1.upload)(pathToOpenApi, heyApiToken, dryRun);
+        await (0, upload_1.upload)({
+            baseUrl,
+            dryRun,
+            heyApiToken,
+            pathToOpenApi
+        });
         core.debug(`Upload completed: ${new Date().toTimeString()}`);
     }
     catch (error) {
@@ -24989,47 +24997,41 @@ exports.upload = void 0;
 const node_fs_1 = __nccwpck_require__(7561);
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
- * @param pathToOpenApi Path to the OpenAPI specification file.
- * @param heyApiToken Hey API token.
- * @returns {Promise<void>} Resolves after the file is uploaded.
  */
-async function upload(pathToOpenApi, heyApiToken, dryRun) {
-    return new Promise(async (resolve) => {
-        if (!pathToOpenApi) {
-            throw new Error('invalid OpenAPI path');
-        }
-        let data;
-        try {
-            data = (0, node_fs_1.readFileSync)(pathToOpenApi);
-        }
-        catch (error) {
-            throw new Error('invalid OpenAPI path');
-        }
-        const formData = {
-            github_repo: process.env.GITHUB_REPOSITORY,
-            github_repo_id: process.env.GITHUB_REPOSITORY_ID,
-            openapi: data.toString()
-        };
-        if (dryRun) {
-            formData['dry-run'] = dryRun;
-        }
-        const body = Object.entries(formData)
-            .flatMap(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-            .join('&');
-        const response = await fetch('https://platform-production-25fb.up.railway.app/api/openapi', {
-            body,
-            headers: {
-                Authorization: `Bearer ${heyApiToken}`,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            method: 'POST'
-        });
-        if (response.status >= 300) {
-            const error = await response.json();
-            throw new Error(JSON.stringify(error));
-        }
-        resolve();
+async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.app', dryRun, heyApiToken, pathToOpenApi }) {
+    if (!pathToOpenApi) {
+        throw new Error('invalid OpenAPI path');
+    }
+    let data;
+    try {
+        data = (0, node_fs_1.readFileSync)(pathToOpenApi);
+    }
+    catch {
+        throw new Error('invalid OpenAPI path');
+    }
+    const formData = {
+        github_repo: process.env.GITHUB_REPOSITORY,
+        github_repo_id: process.env.GITHUB_REPOSITORY_ID,
+        openapi: data.toString()
+    };
+    if (dryRun) {
+        formData['dry-run'] = dryRun;
+    }
+    const body = Object.entries(formData)
+        .flatMap(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+        .join('&');
+    const response = await fetch(`${baseUrl}/v1/specs`, {
+        body,
+        headers: {
+            Authorization: `Bearer ${heyApiToken}`,
+            'Content-Type': 'multipart/form-data'
+        },
+        method: 'POST'
     });
+    if (response.status >= 300) {
+        const error = await response.json();
+        throw new Error(JSON.stringify(error));
+    }
 }
 exports.upload = upload;
 

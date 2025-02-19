@@ -7,18 +7,18 @@ export async function upload({
   baseUrl = 'https://platform-production-25fb.up.railway.app',
   dryRun,
   heyApiToken,
-  pathToOpenApi,
+  pathToOpenApi
 }: {
-  baseUrl?: string;
-  dryRun?: boolean;
+  baseUrl?: string
+  dryRun?: boolean
   /**
    * Hey API token.
    */
-  heyApiToken: string;
+  heyApiToken: string
   /**
    * Path to the OpenAPI specification file.
    */
-  pathToOpenApi: string;
+  pathToOpenApi: string
 }): Promise<void> {
   if (!pathToOpenApi) {
     throw new Error('invalid OpenAPI path')
@@ -52,10 +52,10 @@ export async function upload({
     body,
     headers: {
       Authorization: `Bearer ${heyApiToken}`,
-      'Content-Type': 'multipart/form-data',
+      'Content-Type': 'multipart/form-data'
     },
-    method: 'POST',
-  });
+    method: 'POST'
+  })
 
   if (response.status >= 300) {
     const error = await response.json()
