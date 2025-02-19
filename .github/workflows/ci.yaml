@@ -26,6 +26,7 @@ jobs:
         id: upload-json-openapi-spec
         uses: ./
         with:
+          base-url: https://grouse-factual-internally.ngrok-free.app
           dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.json
@@ -34,6 +35,7 @@ jobs:
         id: upload-yaml-openapi-spec
         uses: ./
         with:
+          base-url: https://grouse-factual-internally.ngrok-free.app
           dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.yaml

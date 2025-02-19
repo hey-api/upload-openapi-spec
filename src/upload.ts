@@ -4,10 +4,12 @@ import { readFileSync } from 'node:fs'
  * Read and upload the provided OpenAPI specification to Hey API.
  */
 export async function upload({
+  baseUrl = 'https://platform-production-25fb.up.railway.app',
   dryRun,
   heyApiToken,
   pathToOpenApi,
 }: {
+  baseUrl?: string;
   dryRun?: boolean;
   /**
    * Hey API token.
@@ -46,17 +48,14 @@ export async function upload({
     )
     .join('&')
 
-  const response = await fetch(
-    'https://platform-production-25fb.up.railway.app/api/openapi',
-    {
-      body,
-      headers: {
-        Authorization: `Bearer ${heyApiToken}`,
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      method: 'POST'
-    }
-  )
+  const response = await fetch(`${baseUrl}/v1/specs`, {
+    body,
+    headers: {
+      Authorization: `Bearer ${heyApiToken}`,
+      'Content-Type': 'multipart/form-data',
+    },
+    method: 'POST',
+  });
 
   if (response.status >= 300) {
     const error = await response.json()
