@@ -25002,20 +25002,18 @@ const node_path_1 = __importDefault(__nccwpck_require__(9411));
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
-async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.app', 
-// dryRun,
-heyApiToken, pathToOpenApi }) {
+async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.app', dryRun, heyApiToken, pathToOpenApi }) {
     if (!pathToOpenApi) {
         throw new Error('invalid OpenAPI path');
     }
     const formData = new FormData();
     formData.append('spec', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
+    if (dryRun) {
+        formData.append('dry_run', 'true');
+    }
     // const formData: Record<string, string | number | boolean> = {
     //   // github_repo: process.env.GITHUB_REPOSITORY!,
     //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-    // }
-    // if (dryRun) {
-    //   formData['dry-run'] = dryRun
     // }
     const response = await fetch(`${baseUrl}/v1/specs`, {
         body: formData,

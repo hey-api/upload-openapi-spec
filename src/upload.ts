@@ -6,7 +6,7 @@ import path from 'node:path'
  */
 export async function upload({
   baseUrl = 'https://platform-production-25fb.up.railway.app',
-  // dryRun,
+  dryRun,
   heyApiToken,
   pathToOpenApi
 }: {
@@ -29,13 +29,13 @@ export async function upload({
   
   formData.append('spec', new Blob([fs.readFileSync(pathToOpenApi)]), path.basename(pathToOpenApi));
 
+  if (dryRun) {
+    formData.append('dry_run', 'true');
+  }
+
   // const formData: Record<string, string | number | boolean> = {
   //   // github_repo: process.env.GITHUB_REPOSITORY!,
   //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-  // }
-
-  // if (dryRun) {
-  //   formData['dry-run'] = dryRun
   // }
 
   const response = await fetch(`${baseUrl}/v1/specs`, {
