@@ -25022,7 +25022,15 @@ async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.a
     }
     formData.append('ci_platform', 'github');
     if (process.env.GITHUB_SHA) {
-        formData.append('commit_sha', process.env.GITHUB_SHA);
+        let commitSha = process.env.GITHUB_SHA;
+        if (process.env.GITHUB_EVENT_NAME === 'pull_request' &&
+            process.env.GITHUB_EVENT_PATH) {
+            const event = JSON.parse(node_fs_1.default.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf-8'));
+            if (event?.pull_request?.head?.sha) {
+                commitSha = event.pull_request.head.sha;
+            }
+        }
+        formData.append('commit_sha', commitSha);
     }
     if (dryRun) {
         formData.append('dry_run', 'true');
