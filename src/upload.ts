@@ -33,6 +33,9 @@ export async function upload({
     formData.append('dry_run', 'true');
   }
 
+  console.log('🔥🔥🔥')
+  console.log(process.env)
+
   // const formData: Record<string, string | number | boolean> = {
   //   // github_repo: process.env.GITHUB_REPOSITORY!,
   //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
