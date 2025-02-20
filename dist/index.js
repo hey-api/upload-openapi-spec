@@ -25007,20 +25007,55 @@ async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.a
         throw new Error('invalid OpenAPI path');
     }
     const formData = new FormData();
-    formData.append('spec', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
+    if (process.env.GITHUB_ACTOR) {
+        formData.append('actor', process.env.GITHUB_ACTOR);
+    }
+    if (process.env.GITHUB_ACTOR_ID) {
+        formData.append('actor_id', process.env.GITHUB_ACTOR_ID);
+    }
+    const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
+    if (branch) {
+        formData.append('branch', branch);
+    }
+    if (process.env.GITHUB_BASE_REF) {
+        formData.append('branch_base', process.env.GITHUB_BASE_REF);
+    }
+    formData.append('ci_platform', 'github');
+    if (process.env.GITHUB_SHA) {
+        formData.append('commit_sha', process.env.GITHUB_SHA);
+    }
     if (dryRun) {
         formData.append('dry_run', 'true');
     }
-    console.log('🔥🔥🔥');
-    console.log(process.env);
-    // const formData: Record<string, string | number | boolean> = {
-    //   // github_repo: process.env.GITHUB_REPOSITORY!,
-    //   // github_repo_id: process.env.GITHUB_REPOSITORY_ID!,
-    // }
+    if (process.env.GITHUB_EVENT_NAME) {
+        formData.append('event_name', process.env.GITHUB_EVENT_NAME);
+    }
+    if (process.env.GITHUB_JOB) {
+        formData.append('job', process.env.GITHUB_JOB);
+    }
+    if (process.env.GITHUB_REF) {
+        formData.append('ref', process.env.GITHUB_REF);
+    }
+    if (process.env.GITHUB_REF_TYPE) {
+        formData.append('ref_type', process.env.GITHUB_REF_TYPE);
+    }
+    if (process.env.GITHUB_REPOSITORY) {
+        formData.append('repository', process.env.GITHUB_REPOSITORY);
+    }
+    if (process.env.GITHUB_RUN_ID) {
+        formData.append('run_id', process.env.GITHUB_RUN_ID);
+    }
+    if (process.env.GITHUB_RUN_NUMBER) {
+        formData.append('run_number', process.env.GITHUB_RUN_NUMBER);
+    }
+    formData.append('spec', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
+    if (process.env.GITHUB_WORKFLOW) {
+        formData.append('workflow', process.env.GITHUB_WORKFLOW);
+    }
     const response = await fetch(`${baseUrl}/v1/specs`, {
         body: formData,
         headers: {
-            Authorization: `Bearer ${heyApiToken}`,
+            Authorization: `Bearer ${heyApiToken}`
         },
         method: 'POST'
     });
