@@ -27,7 +27,7 @@ jobs:
         uses: ./
         with:
           base-url: https://grouse-factual-internally.ngrok-free.app
-          dry-run: true
+          # dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.json
 
@@ -36,6 +36,6 @@ jobs:
         uses: ./
         with:
           base-url: https://grouse-factual-internally.ngrok-free.app
-          dry-run: true
+          # dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.yaml
