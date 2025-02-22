@@ -25056,11 +25056,11 @@ async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.a
     if (process.env.GITHUB_RUN_NUMBER) {
         formData.append('run_number', process.env.GITHUB_RUN_NUMBER);
     }
-    formData.append('spec', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
+    formData.append('specification', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
     if (process.env.GITHUB_WORKFLOW) {
         formData.append('workflow', process.env.GITHUB_WORKFLOW);
     }
-    const response = await fetch(`${baseUrl}/v1/specs`, {
+    const response = await fetch(`${baseUrl}/v1/specifications`, {
         body: formData,
         headers: {
             Authorization: `Bearer ${heyApiToken}`

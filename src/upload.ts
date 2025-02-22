@@ -97,7 +97,7 @@ export async function upload({
   }
 
   formData.append(
-    'spec',
+    'specification',
     new Blob([fs.readFileSync(pathToOpenApi)]),
     path.basename(pathToOpenApi)
   )
@@ -106,7 +106,7 @@ export async function upload({
     formData.append('workflow', process.env.GITHUB_WORKFLOW)
   }
 
-  const response = await fetch(`${baseUrl}/v1/specs`, {
+  const response = await fetch(`${baseUrl}/v1/specifications`, {
     body: formData,
     headers: {
       Authorization: `Bearer ${heyApiToken}`
