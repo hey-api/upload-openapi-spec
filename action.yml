@@ -16,6 +16,9 @@ inputs:
   path-to-openapi:
     description: Input path to your OpenAPI specification file
     required: true
+  tags:
+    description: Custom specification tags
+    required: false
 name: Upload OpenAPI spec by Hey API 👋
 runs:
   main: dist/index.js

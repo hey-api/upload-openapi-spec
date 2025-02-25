@@ -8,9 +8,16 @@ export async function upload({
   baseUrl = 'https://platform-production-25fb.up.railway.app',
   dryRun,
   heyApiToken,
-  pathToOpenApi
+  pathToOpenApi,
+  tags
 }: {
+  /**
+   * Custom service url.
+   */
   baseUrl?: string
+  /**
+   * Return mock response?
+   */
   dryRun?: boolean
   /**
    * Hey API token.
@@ -20,6 +27,10 @@ export async function upload({
    * Path to the OpenAPI specification file.
    */
   pathToOpenApi: string
+  /**
+   * Custom specification tags.
+   */
+  tags?: string
 }): Promise<void> {
   if (!pathToOpenApi) {
     throw new Error('invalid OpenAPI path')
@@ -101,6 +112,10 @@ export async function upload({
     new Blob([fs.readFileSync(pathToOpenApi)]),
     path.basename(pathToOpenApi)
   )
+
+  if (tags) {
+    formData.append('tags', tags)
+  }
 
   if (process.env.GITHUB_WORKFLOW) {
     formData.append('workflow', process.env.GITHUB_WORKFLOW)

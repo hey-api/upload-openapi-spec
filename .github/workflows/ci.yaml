@@ -30,6 +30,7 @@ jobs:
           # dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.json
+          tags: dev
 
       - name: Upload YAML OpenAPI spec
         id: upload-yaml-openapi-spec
@@ -39,3 +40,4 @@ jobs:
           # dry-run: true
           hey-api-token: ${{ secrets.HEY_API_TOKEN }}
           path-to-openapi: ./openapi.yaml
+          tags: dev

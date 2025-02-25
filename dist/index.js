@@ -24966,13 +24966,17 @@ async function run() {
         const pathToOpenApi = core.getInput('path-to-openapi', {
             required: true
         });
+        const tags = core.getInput('tags', {
+            required: false
+        });
         core.debug(`Path to OpenAPI: ${pathToOpenApi}`);
         core.debug(`Upload started: ${new Date().toTimeString()}`);
         await (0, upload_1.upload)({
             baseUrl,
             dryRun,
             heyApiToken,
-            pathToOpenApi
+            pathToOpenApi,
+            tags
         });
         core.debug(`Upload completed: ${new Date().toTimeString()}`);
     }
@@ -25002,7 +25006,7 @@ const node_path_1 = __importDefault(__nccwpck_require__(9411));
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
-async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.app', dryRun, heyApiToken, pathToOpenApi }) {
+async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.app', dryRun, heyApiToken, pathToOpenApi, tags }) {
     if (!pathToOpenApi) {
         throw new Error('invalid OpenAPI path');
     }
@@ -25057,6 +25061,9 @@ async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.a
         formData.append('run_number', process.env.GITHUB_RUN_NUMBER);
     }
     formData.append('specification', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
+    if (tags) {
+        formData.append('tags', tags);
+    }
     if (process.env.GITHUB_WORKFLOW) {
         formData.append('workflow', process.env.GITHUB_WORKFLOW);
     }

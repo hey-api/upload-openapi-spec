@@ -20,6 +20,9 @@ export async function run(): Promise<void> {
     const pathToOpenApi: string = core.getInput('path-to-openapi', {
       required: true
     })
+    const tags: string = core.getInput('tags', {
+      required: false
+    })
 
     core.debug(`Path to OpenAPI: ${pathToOpenApi}`)
     core.debug(`Upload started: ${new Date().toTimeString()}`)
@@ -27,7 +30,8 @@ export async function run(): Promise<void> {
       baseUrl,
       dryRun,
       heyApiToken,
-      pathToOpenApi
+      pathToOpenApi,
+      tags
     })
     core.debug(`Upload completed: ${new Date().toTimeString()}`)
   } catch (error) {
