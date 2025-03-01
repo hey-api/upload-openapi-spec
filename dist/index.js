@@ -25006,7 +25006,7 @@ const node_path_1 = __importDefault(__nccwpck_require__(9411));
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
-async function upload({ baseUrl = 'https://api.heyapi.dev', dryRun, heyApiToken, pathToOpenApi, tags }) {
+async function upload({ baseUrl, dryRun, heyApiToken, pathToOpenApi, tags }) {
     if (!pathToOpenApi) {
         throw new Error('invalid OpenAPI path');
     }
@@ -25067,15 +25067,13 @@ async function upload({ baseUrl = 'https://api.heyapi.dev', dryRun, heyApiToken,
     if (process.env.GITHUB_WORKFLOW) {
         formData.append('workflow', process.env.GITHUB_WORKFLOW);
     }
-    console.log(`${baseUrl}/v1/specifications`);
-    const response = await fetch(`${baseUrl}/v1/specifications`, {
+    const response = await fetch(`${baseUrl || 'https://api.heyapi.dev'}/v1/specifications`, {
         body: formData,
         headers: {
             Authorization: `Bearer ${heyApiToken}`
         },
         method: 'POST'
     });
-    console.log(response.status);
     if (response.status >= 300) {
         const error = await response.json();
         throw new Error(JSON.stringify(error));

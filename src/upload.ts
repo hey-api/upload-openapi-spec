@@ -5,7 +5,7 @@ import path from 'node:path'
  * Read and upload the provided OpenAPI specification to Hey API.
  */
 export async function upload({
-  baseUrl = 'https://api.heyapi.dev',
+  baseUrl,
   dryRun,
   heyApiToken,
   pathToOpenApi,
@@ -121,17 +121,16 @@ export async function upload({
     formData.append('workflow', process.env.GITHUB_WORKFLOW)
   }
 
-  console.log(`${baseUrl}/v1/specifications`)
-
-  const response = await fetch(`${baseUrl}/v1/specifications`, {
-    body: formData,
-    headers: {
-      Authorization: `Bearer ${heyApiToken}`
-    },
-    method: 'POST'
-  })
-
-  console.log(response.status)
+  const response = await fetch(
+    `${baseUrl || 'https://api.heyapi.dev'}/v1/specifications`,
+    {
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${heyApiToken}`
+      },
+      method: 'POST'
+    }
+  )
 
   if (response.status >= 300) {
     const error = await response.json()
