@@ -24957,15 +24957,27 @@ async function run() {
         const dryRun = core.getInput('dry-run', {
             required: false
         }) === 'true';
+        const baseUrl = core.getInput('base-url', {
+            required: false
+        });
         const heyApiToken = core.getInput('hey-api-token', {
             required: true
         });
         const pathToOpenApi = core.getInput('path-to-openapi', {
             required: true
         });
+        const tags = core.getInput('tags', {
+            required: false
+        });
         core.debug(`Path to OpenAPI: ${pathToOpenApi}`);
         core.debug(`Upload started: ${new Date().toTimeString()}`);
-        await (0, upload_1.upload)(pathToOpenApi, heyApiToken, dryRun);
+        await (0, upload_1.upload)({
+            baseUrl,
+            dryRun,
+            heyApiToken,
+            pathToOpenApi,
+            tags
+        });
         core.debug(`Upload completed: ${new Date().toTimeString()}`);
     }
     catch (error) {
@@ -24980,56 +24992,92 @@ exports.run = run;
 /***/ }),
 
 /***/ 7296:
-/***/ ((__unused_webpack_module, exports, __nccwpck_require__) => {
+/***/ (function(__unused_webpack_module, exports, __nccwpck_require__) {
 
 "use strict";
 
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.upload = void 0;
-const node_fs_1 = __nccwpck_require__(7561);
+const node_fs_1 = __importDefault(__nccwpck_require__(7561));
+const node_path_1 = __importDefault(__nccwpck_require__(9411));
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
- * @param pathToOpenApi Path to the OpenAPI specification file.
- * @param heyApiToken Hey API token.
- * @returns {Promise<void>} Resolves after the file is uploaded.
  */
-async function upload(pathToOpenApi, heyApiToken, dryRun) {
-    return new Promise(async (resolve) => {
-        if (!pathToOpenApi) {
-            throw new Error('invalid OpenAPI path');
+async function upload({ baseUrl, dryRun, heyApiToken, pathToOpenApi, tags }) {
+    if (!pathToOpenApi) {
+        throw new Error('invalid OpenAPI path');
+    }
+    const formData = new FormData();
+    if (process.env.GITHUB_ACTOR) {
+        formData.append('actor', process.env.GITHUB_ACTOR);
+    }
+    if (process.env.GITHUB_ACTOR_ID) {
+        formData.append('actor_id', process.env.GITHUB_ACTOR_ID);
+    }
+    const branch = process.env.GITHUB_HEAD_REF || process.env.GITHUB_REF_NAME;
+    if (branch) {
+        formData.append('branch', branch);
+    }
+    if (process.env.GITHUB_BASE_REF) {
+        formData.append('branch_base', process.env.GITHUB_BASE_REF);
+    }
+    formData.append('ci_platform', 'github');
+    if (process.env.GITHUB_SHA) {
+        let commitSha = process.env.GITHUB_SHA;
+        if (process.env.GITHUB_EVENT_NAME === 'pull_request' &&
+            process.env.GITHUB_EVENT_PATH) {
+            const event = JSON.parse(node_fs_1.default.readFileSync(process.env.GITHUB_EVENT_PATH, 'utf-8'));
+            if (event?.pull_request?.head?.sha) {
+                commitSha = event.pull_request.head.sha;
+            }
         }
-        let data;
-        try {
-            data = (0, node_fs_1.readFileSync)(pathToOpenApi);
-        }
-        catch (error) {
-            throw new Error('invalid OpenAPI path');
-        }
-        const formData = {
-            github_repo: process.env.GITHUB_REPOSITORY,
-            github_repo_id: process.env.GITHUB_REPOSITORY_ID,
-            openapi: data.toString()
-        };
-        if (dryRun) {
-            formData['dry-run'] = dryRun;
-        }
-        const body = Object.entries(formData)
-            .flatMap(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-            .join('&');
-        const response = await fetch('https://platform-production-25fb.up.railway.app/api/openapi', {
-            body,
-            headers: {
-                Authorization: `Bearer ${heyApiToken}`,
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            method: 'POST'
-        });
-        if (response.status >= 300) {
-            const error = await response.json();
-            throw new Error(JSON.stringify(error));
-        }
-        resolve();
+        formData.append('commit_sha', commitSha);
+    }
+    if (dryRun) {
+        formData.append('dry_run', 'true');
+    }
+    if (process.env.GITHUB_EVENT_NAME) {
+        formData.append('event_name', process.env.GITHUB_EVENT_NAME);
+    }
+    if (process.env.GITHUB_JOB) {
+        formData.append('job', process.env.GITHUB_JOB);
+    }
+    if (process.env.GITHUB_REF) {
+        formData.append('ref', process.env.GITHUB_REF);
+    }
+    if (process.env.GITHUB_REF_TYPE) {
+        formData.append('ref_type', process.env.GITHUB_REF_TYPE);
+    }
+    if (process.env.GITHUB_REPOSITORY) {
+        formData.append('repository', process.env.GITHUB_REPOSITORY);
+    }
+    if (process.env.GITHUB_RUN_ID) {
+        formData.append('run_id', process.env.GITHUB_RUN_ID);
+    }
+    if (process.env.GITHUB_RUN_NUMBER) {
+        formData.append('run_number', process.env.GITHUB_RUN_NUMBER);
+    }
+    formData.append('specification', new Blob([node_fs_1.default.readFileSync(pathToOpenApi)]), node_path_1.default.basename(pathToOpenApi));
+    if (tags) {
+        formData.append('tags', tags);
+    }
+    if (process.env.GITHUB_WORKFLOW) {
+        formData.append('workflow', process.env.GITHUB_WORKFLOW);
+    }
+    const response = await fetch(`${baseUrl || 'https://api.heyapi.dev'}/v1/specifications`, {
+        body: formData,
+        headers: {
+            Authorization: `Bearer ${heyApiToken}`
+        },
+        method: 'POST'
     });
+    if (response.status >= 300) {
+        const error = await response.json();
+        throw new Error(JSON.stringify(error));
+    }
 }
 exports.upload = upload;
 
@@ -25145,6 +25193,14 @@ module.exports = require("node:events");
 
 "use strict";
 module.exports = require("node:fs");
+
+/***/ }),
+
+/***/ 9411:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:path");
 
 /***/ }),
 

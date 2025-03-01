@@ -1,12 +1,12 @@
 <div align="center">
-  <img width="150" height="150" src="https://heyapi.vercel.app/logo.png" alt="Logo">
+  <img alt="Hey API logo" height="150" src="https://heyapi.dev/images/logo-300w.png" width="150">
   <h1 align="center"><b>Upload OpenAPI Specification</b></h1>
-  <p align="center">A GitHub Action that uploads your OpenAPI specifications to Hey API 🚀</p>
+  <p align="center">🚀 A GitHub Action that uploads your OpenAPI specifications to Hey API</p>
 </div>
 
 To use this action, you have to be registered with
-[Hey API](https://heyapi.vercel.app/). If you don't have an account, please
-[email us](mailto:lmenus@lmen.us) or
+[Hey API](https://heyapi.dev/). If you don't have an account, please
+[email us](mailto:lubos@heyapi.dev) or
 [open an issue](https://github.com/hey-api/upload-openapi-spec/issues) and we
 will set you up.
 

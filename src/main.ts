@@ -11,16 +11,28 @@ export async function run(): Promise<void> {
       core.getInput('dry-run', {
         required: false
       }) === 'true'
+    const baseUrl: string = core.getInput('base-url', {
+      required: false
+    })
     const heyApiToken: string = core.getInput('hey-api-token', {
       required: true
     })
     const pathToOpenApi: string = core.getInput('path-to-openapi', {
       required: true
     })
+    const tags: string = core.getInput('tags', {
+      required: false
+    })
 
     core.debug(`Path to OpenAPI: ${pathToOpenApi}`)
     core.debug(`Upload started: ${new Date().toTimeString()}`)
-    await upload(pathToOpenApi, heyApiToken, dryRun)
+    await upload({
+      baseUrl,
+      dryRun,
+      heyApiToken,
+      pathToOpenApi,
+      tags
+    })
     core.debug(`Upload completed: ${new Date().toTimeString()}`)
   } catch (error) {
     if (error instanceof Error) {

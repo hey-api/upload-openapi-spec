@@ -4,6 +4,9 @@ branding:
   icon: file-plus
 description: Upload your OpenAPI specification to Hey API
 inputs:
+  base-url:
+    description: Configure Hey API server URL
+    required: false
   dry-run:
     description: Run action in dry run mode
     required: false
@@ -13,6 +16,9 @@ inputs:
   path-to-openapi:
     description: Input path to your OpenAPI specification file
     required: true
+  tags:
+    description: Custom specification tags
+    required: false
 name: Upload OpenAPI spec by Hey API 👋
 runs:
   main: dist/index.js
