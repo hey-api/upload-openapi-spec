@@ -25067,6 +25067,7 @@ async function upload({ baseUrl = 'https://api.heyapi.dev', dryRun, heyApiToken,
     if (process.env.GITHUB_WORKFLOW) {
         formData.append('workflow', process.env.GITHUB_WORKFLOW);
     }
+    console.log(`${baseUrl}/v1/specifications`);
     const response = await fetch(`${baseUrl}/v1/specifications`, {
         body: formData,
         headers: {
@@ -25074,6 +25075,7 @@ async function upload({ baseUrl = 'https://api.heyapi.dev', dryRun, heyApiToken,
         },
         method: 'POST'
     });
+    console.log(response.status);
     if (response.status >= 300) {
         const error = await response.json();
         throw new Error(JSON.stringify(error));
