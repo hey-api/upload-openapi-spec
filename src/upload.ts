@@ -5,7 +5,7 @@ import path from 'node:path'
  * Read and upload the provided OpenAPI specification to Hey API.
  */
 export async function upload({
-  baseUrl = 'https://platform-production-25fb.up.railway.app',
+  baseUrl = 'https://api.heyapi.dev',
   dryRun,
   heyApiToken,
   pathToOpenApi,

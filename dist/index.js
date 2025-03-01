@@ -25006,7 +25006,7 @@ const node_path_1 = __importDefault(__nccwpck_require__(9411));
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
-async function upload({ baseUrl = 'https://platform-production-25fb.up.railway.app', dryRun, heyApiToken, pathToOpenApi, tags }) {
+async function upload({ baseUrl = 'https://api.heyapi.dev', dryRun, heyApiToken, pathToOpenApi, tags }) {
     if (!pathToOpenApi) {
         throw new Error('invalid OpenAPI path');
     }
