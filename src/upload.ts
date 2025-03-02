@@ -6,12 +6,16 @@ import { postV1Specifications } from './client'
  * Read and upload the provided OpenAPI specification to Hey API.
  */
 export async function upload({
+  apiKey,
   baseUrl,
   dryRun,
-  heyApiToken,
-  pathToOpenApi,
+  pathToFile,
   tags
 }: {
+  /**
+   * Hey API token.
+   */
+  apiKey: string
   /**
    * Custom service url.
    */
@@ -21,19 +25,15 @@ export async function upload({
    */
   dryRun?: boolean
   /**
-   * Hey API token.
-   */
-  heyApiToken: string
-  /**
    * Path to the OpenAPI specification file.
    */
-  pathToOpenApi: string
+  pathToFile: string
   /**
    * Custom specification tags.
    */
   tags?: string
 }): Promise<void> {
-  if (!pathToOpenApi) {
+  if (!pathToFile) {
     throw new Error('invalid OpenAPI path')
   }
 
@@ -51,15 +51,15 @@ export async function upload({
     }
   }
 
-  const specification = new Blob([fs.readFileSync(pathToOpenApi)], {
+  const specification = new Blob([fs.readFileSync(pathToFile)], {
     type:
-      pathToOpenApi.endsWith('.yaml') || pathToOpenApi.endsWith('.yaml')
+      pathToFile.endsWith('.yaml') || pathToFile.endsWith('.yaml')
         ? 'application/yaml'
         : 'application/json'
   })
 
   const { error } = await postV1Specifications({
-    auth: heyApiToken,
+    auth: apiKey,
     baseUrl: baseUrl || 'https://api.heyapi.dev',
     body: {
       actor: process.env.GITHUB_ACTOR,

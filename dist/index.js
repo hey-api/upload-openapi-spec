@@ -25049,28 +25049,28 @@ const upload_1 = __nccwpck_require__(7296);
  */
 async function run() {
     try {
-        const dryRun = core.getInput('dry-run', {
-            required: false
-        }) === 'true';
+        const apiKey = core.getInput('api-key', {
+            required: true
+        });
         const baseUrl = core.getInput('base-url', {
             required: false
         });
-        const heyApiToken = core.getInput('hey-api-token', {
-            required: true
-        });
-        const pathToOpenApi = core.getInput('path-to-openapi', {
+        const dryRun = core.getInput('dry-run', {
+            required: false
+        }) === 'true';
+        const pathToFile = core.getInput('path-to-file', {
             required: true
         });
         const tags = core.getInput('tags', {
             required: false
         });
-        core.debug(`Path to OpenAPI: ${pathToOpenApi}`);
+        core.debug(`Path to OpenAPI: ${pathToFile}`);
         core.debug(`Upload started: ${new Date().toTimeString()}`);
         await (0, upload_1.upload)({
+            apiKey,
             baseUrl,
             dryRun,
-            heyApiToken,
-            pathToOpenApi,
+            pathToFile,
             tags
         });
         core.debug(`Upload completed: ${new Date().toTimeString()}`);
@@ -25100,8 +25100,8 @@ const client_1 = __nccwpck_require__(7929);
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
-async function upload({ baseUrl, dryRun, heyApiToken, pathToOpenApi, tags }) {
-    if (!pathToOpenApi) {
+async function upload({ apiKey, baseUrl, dryRun, pathToFile, tags }) {
+    if (!pathToFile) {
         throw new Error('invalid OpenAPI path');
     }
     let commitSha = process.env.GITHUB_SHA;
@@ -25113,13 +25113,13 @@ async function upload({ baseUrl, dryRun, heyApiToken, pathToOpenApi, tags }) {
             commitSha = event.pull_request.head.sha;
         }
     }
-    const specification = new Blob([node_fs_1.default.readFileSync(pathToOpenApi)], {
-        type: pathToOpenApi.endsWith('.yaml') || pathToOpenApi.endsWith('.yaml')
+    const specification = new Blob([node_fs_1.default.readFileSync(pathToFile)], {
+        type: pathToFile.endsWith('.yaml') || pathToFile.endsWith('.yaml')
             ? 'application/yaml'
             : 'application/json'
     });
     const { error } = await (0, client_1.postV1Specifications)({
-        auth: heyApiToken,
+        auth: apiKey,
         baseUrl: baseUrl || 'https://api.heyapi.dev',
         body: {
             actor: process.env.GITHUB_ACTOR,
