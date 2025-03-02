@@ -4,16 +4,16 @@ branding:
   icon: file-plus
 description: Upload your OpenAPI specification to Hey API
 inputs:
+  api-key:
+    description: Hey API service token
+    required: true
   base-url:
     description: Configure Hey API server URL
     required: false
   dry-run:
     description: Run action in dry run mode
     required: false
-  hey-api-token:
-    description: Hey API service token
-    required: true
-  path-to-openapi:
+  path-to-file:
     description: Input path to your OpenAPI specification file
     required: true
   tags:
