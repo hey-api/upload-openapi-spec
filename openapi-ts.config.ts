@@ -1,0 +1,18 @@
+import { defineConfig } from '@hey-api/openapi-ts'
+
+export default defineConfig({
+  input: {
+    path: `https://api.heyapi.dev/v1/get/hey-api/backend?api_key=${process.env.HEY_API_USER_TOKEN}`,
+    include:
+      '^(#/paths/v1/specifications/post|#/components/schemas/Specification)$'
+  },
+  output: './src/client',
+  plugins: [
+    {
+      exportFromIndex: true,
+      name: '@hey-api/client-fetch'
+    },
+    '@hey-api/typescript',
+    '@hey-api/sdk'
+  ]
+})
