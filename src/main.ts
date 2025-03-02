@@ -6,10 +6,15 @@ import { upload } from './upload'
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 export async function run(): Promise<void> {
+  if (!process.env.API_KEY) {
+    core.setFailed('The API_KEY environment variable is required.')
+  }
+
+  if (!process.env.GITHUB_TOKEN) {
+    core.setFailed('The GITHUB_TOKEN environment variable is required.')
+  }
+
   try {
-    const apiKey: string = core.getInput('api-key', {
-      required: true
-    })
     const baseUrl: string = core.getInput('base-url', {
       required: false
     })
@@ -27,7 +32,6 @@ export async function run(): Promise<void> {
     core.debug(`Path to OpenAPI: ${pathToFile}`)
     core.debug(`Upload started: ${new Date().toTimeString()}`)
     await upload({
-      apiKey,
       baseUrl,
       dryRun,
       pathToFile,
