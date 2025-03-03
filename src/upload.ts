@@ -6,16 +6,11 @@ import { postV1Specifications } from './client'
  * Read and upload the provided OpenAPI specification to Hey API.
  */
 export async function upload({
-  apiKey,
   baseUrl,
   dryRun,
   pathToFile,
   tags
 }: {
-  /**
-   * Hey API token.
-   */
-  apiKey: string
   /**
    * Custom service url.
    */
@@ -58,8 +53,23 @@ export async function upload({
         : 'application/json'
   })
 
+  const repository = process.env.GITHUB_REPOSITORY
+
+  const response = await fetch(`https://api.github.com/repos/${repository}`, {
+    method: 'GET',
+    headers: {
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
+    }
+  })
+
+  let defaultBranch
+  if (response.ok) {
+    const repo = await response.json()
+    defaultBranch = repo.default_branch
+  }
+
   const { error } = await postV1Specifications({
-    auth: apiKey,
+    auth: process.env.API_KEY,
     baseUrl: baseUrl || 'https://api.heyapi.dev',
     body: {
       actor: process.env.GITHUB_ACTOR,
@@ -68,12 +78,14 @@ export async function upload({
       branch_base: process.env.GITHUB_BASE_REF,
       ci_platform: 'github',
       commit_sha: commitSha,
+      // @ts-expect-error
+      default_branch: defaultBranch,
       dry_run: dryRun,
       event_name: process.env.GITHUB_EVENT_NAME,
       job: process.env.GITHUB_JOB,
       ref: process.env.GITHUB_REF,
       ref_type: process.env.GITHUB_REF_TYPE,
-      repository: process.env.GITHUB_REPOSITORY,
+      repository,
       run_id: process.env.GITHUB_RUN_ID,
       run_number: process.env.GITHUB_RUN_NUMBER,
       specification,

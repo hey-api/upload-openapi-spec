@@ -4,9 +4,6 @@ branding:
   icon: file-plus
 description: Upload your OpenAPI specification to Hey API
 inputs:
-  api-key:
-    description: Hey API service token
-    required: true
   base-url:
     description: Configure Hey API server URL
     required: false

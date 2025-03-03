@@ -25048,10 +25048,13 @@ const upload_1 = __nccwpck_require__(7296);
  * @returns {Promise<void>} Resolves when the action is complete.
  */
 async function run() {
+    if (!process.env.API_KEY) {
+        core.setFailed('The API_KEY environment variable is required.');
+    }
+    if (!process.env.GITHUB_TOKEN) {
+        core.setFailed('The GITHUB_TOKEN environment variable is required.');
+    }
     try {
-        const apiKey = core.getInput('api-key', {
-            required: true
-        });
         const baseUrl = core.getInput('base-url', {
             required: false
         });
@@ -25067,7 +25070,6 @@ async function run() {
         core.debug(`Path to OpenAPI: ${pathToFile}`);
         core.debug(`Upload started: ${new Date().toTimeString()}`);
         await (0, upload_1.upload)({
-            apiKey,
             baseUrl,
             dryRun,
             pathToFile,
@@ -25100,7 +25102,7 @@ const client_1 = __nccwpck_require__(7929);
 /**
  * Read and upload the provided OpenAPI specification to Hey API.
  */
-async function upload({ apiKey, baseUrl, dryRun, pathToFile, tags }) {
+async function upload({ baseUrl, dryRun, pathToFile, tags }) {
     if (!pathToFile) {
         throw new Error('invalid OpenAPI path');
     }
@@ -25118,8 +25120,20 @@ async function upload({ apiKey, baseUrl, dryRun, pathToFile, tags }) {
             ? 'application/yaml'
             : 'application/json'
     });
+    const repository = process.env.GITHUB_REPOSITORY;
+    const response = await fetch(`https://api.github.com/repos/${repository}`, {
+        method: 'GET',
+        headers: {
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`
+        }
+    });
+    let defaultBranch;
+    if (response.ok) {
+        const repo = await response.json();
+        defaultBranch = repo.default_branch;
+    }
     const { error } = await (0, client_1.postV1Specifications)({
-        auth: apiKey,
+        auth: process.env.API_KEY,
         baseUrl: baseUrl || 'https://api.heyapi.dev',
         body: {
             actor: process.env.GITHUB_ACTOR,
@@ -25128,12 +25142,14 @@ async function upload({ apiKey, baseUrl, dryRun, pathToFile, tags }) {
             branch_base: process.env.GITHUB_BASE_REF,
             ci_platform: 'github',
             commit_sha: commitSha,
+            // @ts-expect-error
+            default_branch: defaultBranch,
             dry_run: dryRun,
             event_name: process.env.GITHUB_EVENT_NAME,
             job: process.env.GITHUB_JOB,
             ref: process.env.GITHUB_REF,
             ref_type: process.env.GITHUB_REF_TYPE,
-            repository: process.env.GITHUB_REPOSITORY,
+            repository,
             run_id: process.env.GITHUB_RUN_ID,
             run_number: process.env.GITHUB_RUN_NUMBER,
             specification,

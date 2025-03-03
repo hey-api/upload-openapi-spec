@@ -31,9 +31,11 @@ jobs:
       - name: Upload OpenAPI spec
         uses: hey-api/upload-openapi-spec@v1.2.0
         with:
-          api-key: ${{ secrets.HEY_API_TOKEN }}
           path-to-file: path/to/openapi.json
           tags: optional,custom,tags
+        env:
+          API_KEY: ${{ secrets.HEY_API_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
 The example above will upload your OpenAPI specification to Hey API on every
@@ -43,13 +45,6 @@ pull request and push to the `main` branch.
 
 To successfully upload an OpenAPI specification, you need to provide the
 following inputs (see `with` in the example above)
-
-### `api-key`
-
-This is the project API key you obtained from
-[Hey API](https://app.heyapi.dev/).
-
-> Note: Personal API keys can't be used to upload specifications.
 
 ### `path-to-file`
 
@@ -61,6 +56,23 @@ need an additional step in your GitHub workflow to generate this file (see
 
 A comma-separated string value representing any custom tags you wish to add to
 your OpenAPI specification.
+
+## Environment Variables
+
+In addition to the required `path-to-file` input, you must provide the following
+environment variables.
+
+### `API_KEY`
+
+This is the project API key you obtained from
+[Hey API](https://app.heyapi.dev/).
+
+> Note: Personal API keys can't be used to upload specifications.
+
+### `GITHUB_TOKEN`
+
+This variable will be available inside your workflow by default. It's used to
+fetch information about your repository, i.e. default branch.
 
 ## Next Steps
 
