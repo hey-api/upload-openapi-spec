@@ -33,7 +33,8 @@ export type PostV1SpecificationsData = {
     branch_base?: string
     ci_platform?: string
     commit_sha?: string
-    dry_run?: boolean | null
+    default_branch?: string
+    dry_run?: string
     event_name?: string
     job?: string
     ref?: string
@@ -55,19 +56,34 @@ export type PostV1SpecificationsErrors = {
    * Unauthorized
    */
   401: {
-    message: string
+    error: {
+      message: string
+      request_id: string
+      status: number
+      timestamp: string
+    }
   }
   /**
    * Forbidden
    */
   403: {
-    message: string
+    error: {
+      message: string
+      request_id: string
+      status: number
+      timestamp: string
+    }
   }
   /**
    * Content Too Large
    */
   413: {
-    message: string
+    error: {
+      message: string
+      request_id: string
+      status: number
+      timestamp: string
+    }
   }
 }
 
