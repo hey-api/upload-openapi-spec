@@ -29,7 +29,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Upload OpenAPI spec
-        uses: hey-api/upload-openapi-spec@v1.2.0
+        uses: hey-api/upload-openapi-spec@v1.3.0
         with:
           path-to-file: path/to/openapi.json
           tags: optional,custom,tags
