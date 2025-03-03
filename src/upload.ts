@@ -78,9 +78,8 @@ export async function upload({
       branch_base: process.env.GITHUB_BASE_REF,
       ci_platform: 'github',
       commit_sha: commitSha,
-      // @ts-expect-error
       default_branch: defaultBranch,
-      dry_run: dryRun,
+      dry_run: dryRun ? 'true' : 'false',
       event_name: process.env.GITHUB_EVENT_NAME,
       job: process.env.GITHUB_JOB,
       ref: process.env.GITHUB_REF,
